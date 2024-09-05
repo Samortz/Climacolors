@@ -1,0 +1,38 @@
+
+#Creame un codigo  para el Arduino Esplora que haga que el sensor de temperatura recibe un incremento o disminucion la pantalla lcd cambia a colores frios o calidos depende de la temperatura
+
+#include <Esplora.h>
+#include <TFT.h>  // Librería para la pantalla LCD
+
+#define CS   10
+#define DC   9
+#define RESET 8
+
+TFT pantalla = TFT(CS, DC, RESET);  // Inicializar pantalla LCD
+
+void setup() {
+  Esplora.begin();
+  pantalla.begin();
+  pantalla.background(0, 0, 0);  // Fondo negro
+}
+
+void loop() {
+  int temperaturaRaw = Esplora.readTemperature(DEGREES_C);  // Leer temperatura en grados Celsius
+  
+  // Mostrar la temperatura en la pantalla LCD
+  pantalla.stroke(255, 255, 255);  // Color del texto blanco
+  pantalla.setTextSize(2);  // Tamaño del texto
+  pantalla.text("Temp:", 10, 10);  // Texto en posición (10,10)
+  pantalla.text(String(temperaturaRaw) + " C", 10, 30);  // Muestra la temperatura
+
+  // Cambiar color de fondo según la temperatura
+  if (temperaturaRaw < 20) {  // Temperatura baja
+    pantalla.background(0, 0, 255);  // Color frío (azul)
+  } else if (temperaturaRaw < 30) {  // Temperatura moderada
+    pantalla.background(0, 255, 0);  // Color neutro (verde)
+  } else {  // Temperatura alta
+    pantalla.background(255, 0, 0);  // Color cálido (rojo)
+  }
+
+  delay(1000);  // Esperar un segundo antes de leer la temperatura de nuevo
+}
